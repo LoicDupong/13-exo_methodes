@@ -10,8 +10,28 @@
 </head>
 <body>
     <div class="wrapper">
-        <h1>Card game : Danish | Shithead</h1>
-        
+        <h1>🃏 Card game : Danish | Shithead 🃏</h1>
+        <form action="" class="form">
+            <div class="input-wrapper">
+                <div class="input-wrapper">
+                    <label for="name" class="label label--name">Name</label>
+                    <input type="text" name="name" id="name" placeholder="Player name">
+                    <select name="nbr-players" id="nbr-players">
+                        <option value="" selected disabled>Select number of players</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn--add">Start game</button>
+        </form>
+        <div class="game-table">
+            <div class="pile__container"></div>
+            <div class="deck__container"></div>
+            
+        </div>
     </div>
 </body>
 </html>

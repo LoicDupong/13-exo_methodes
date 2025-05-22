@@ -41,7 +41,7 @@ form{
     gap: 2rem;
 }
 
-input, .btn{
+input, .btn, select{
     padding: 1rem;
     background-color: rgba(255, 255, 255, 0.87);
     box-shadow: 5px 5px 1px hsla(271, 69%, 15%, 0.274);
@@ -50,14 +50,19 @@ input, .btn{
 }
 
 input{
-    width: 100%;
+    width: 65%;
     position: relative;
-    text-align: right;
+    text-align: center;
+}
+
+select{
+    width: 35%;
 }
 
 .label{
     position: absolute;
-    top: -10px;
+    top: 0;
+    translate: 0 -50%;
     left: 4%;
     z-index: 55;
     color: white;
@@ -142,9 +147,9 @@ h2 {
     
 }
 
-.animal{
-    border-radius: 5px;
-    padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.87);
-    box-shadow: 5px 5px 1px hsla(271, 69%, 15%, 0.274);
+.game-table {
+
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    
 }
