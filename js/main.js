@@ -299,6 +299,7 @@ const playerNbrInput = document.getElementById('nbr-players');
 const startBtn = document.querySelector('.btn--add');
 const formContainerHTML = document.querySelector('.form');
 const gameTableHTML = document.querySelector('.game-table');
+const landingUI = document.querySelector('.landing-UI');
 let game;
 let card;
 let cardName;
@@ -318,6 +319,7 @@ startBtn.addEventListener('click', (e) => {
     }
     game = new Game(players);
     game.distributionCards();
+    landingUI.style.display = "none";
 
     // ========== 🃏 Générer les joueurs + mains 🃏 ==========
    for (let index = 0; index < playerNbr; index++) {
