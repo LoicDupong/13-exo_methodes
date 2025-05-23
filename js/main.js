@@ -66,6 +66,7 @@ class Game{
         this.pile = [];
         this.generateDeck();
         this.shuffleDeck();
+        this.initPile();
         this.currentPlayerIndex = 0;
     }
     
@@ -109,6 +110,12 @@ class Game{
         } 
     }
 
+    initPile(){
+        let lastCardDeck = this.deck[this.deck.length -1];
+        this.pile.push(lastCardDeck);
+        this.deck.pop();
+    }
+
     nextTurn() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
     }
@@ -134,26 +141,45 @@ class Game{
     }
 
     playTurn() {
-        if (this.isOver()) {
-          console.log("Game is over Shithead!");
-          return;
-        }
+        if (this.isOver()) return;
       
         const currentPlayer = this.players[this.currentPlayerIndex];
       
-        // Vérifie s’il a sélectionné une ou plusieurs cartes
-        if (
-          currentPlayer.selectedCards.length > 0 &&
-          currentPlayer.canPlay(currentPlayer.selectedCards[0], this.pile)
-        ) {
-          currentPlayer.play(this.pile);
-          currentPlayer.clearSelection();
-        } else {
-          currentPlayer.pickUpPile(this.pile);
+        const play = () => {
+          if (
+            currentPlayer.selectedCards.length > 0 &&
+            currentPlayer.canPlay(currentPlayer.selectedCards[0], this.pile)
+          ) {
+            currentPlayer.play(this.pile);
+            currentPlayer.clearSelection();
+            currentPlayer.draw(this.deck);
+          } else {
+            currentPlayer.pickUpPile(this.pile);
+          }
+      
+          this.nextTurn();
+        };
+      
+        if (this.currentPlayerIndex === 0) {
+          // Joueur humain, attend le clic sur "Play hand"
+          return;
         }
       
-        this.nextTurn();
-      }      
+        // IA
+        setTimeout(() => {
+          const playable = currentPlayer.hand.find(c => currentPlayer.canPlay(c, this.pile));
+          if (playable) currentPlayer.selectedCards = [playable];
+      
+          play();
+          UpdateHand();
+          UpdatePile();
+          UpdateDeck();
+      
+          triggerAITurns(); // 🔁 Rejouer si c’est encore une IA
+        }, 2000);
+      }
+      
+      
     
 }
 
@@ -177,15 +203,13 @@ class Player {
         this.selectedCards = [];
     }
 
-    draw(card, cardFaceUp, cardFaceDown) {
-        if (this.hand.length === 0) {
-            this.hand.push(cardFaceUp);
-        } else if (this.faceUp.length === 0 && this.hand.length === 0) {
-            this.hand.push(cardFaceDown);
-        } else {
-            this.hand.push(card);
+    draw(deck) {
+        while (this.hand.length < 3 && deck.length > 0) {
+          const card = deck.pop(); // retirer du dessus de la pioche
+          this.hand.push(card);
         }
-    }
+      }
+      
 
     selectCard(name, symbol) {
         const foundCard = this.hand.find(
@@ -276,6 +300,11 @@ const startBtn = document.querySelector('.btn--add');
 const formContainerHTML = document.querySelector('.form');
 const gameTableHTML = document.querySelector('.game-table');
 let game;
+let card;
+let cardName;
+let cardSymbol;
+let pileHTML;
+let deckHTML;
 // ========== 💥💥 Event click boutton START 💥💥 ==========
 startBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -335,7 +364,7 @@ startBtn.addEventListener('click', (e) => {
     }
 
     // ========== 🃏 Générer le deck 🃏 ==========
-    const deckHTML = document.createElement('div');
+    deckHTML = document.createElement('div');
     deckHTML.classList = 'deck__container';
     for (let index = 0; index < game.deck.length; index++) {
         deckHTML.innerHTML += `
@@ -345,29 +374,133 @@ startBtn.addEventListener('click', (e) => {
         `
     }
     gameTableHTML.append(deckHTML);
+
+    // ========== 🃏 Générer la pile 🃏 ==========
+    pileHTML = document.createElement('div');
+    pileHTML.classList = 'pile__container';
+    console.log(game.pile);
+    pileHTML.innerHTML += `
+    <div class="card card--deck">
+            <img src="img/cards/${game.pile[0].name}${game.pile[0].symbol}.png" alt="card" class="card--pile">
+    </div>
+    `
+    gameTableHTML.append(pileHTML);
      
     // ========== 🃏 Modifier le nom du joueur principal 🃏 ==========
     const playerContainer = gameTableHTML.querySelector('.player__name'); 
     playerContainer.textContent = playerName;
     playerContainer.parentElement.classList.add('player--main');
     console.log(game.players);
+
+     // ========== 🃏 Générer bouttons joueur principal 🃏 ==========  
+
+     // == BTN PLAY
+     const btnPlay = document.createElement('div');
+     btnPlay.classList = 'btn btn--play';
+     btnPlay.innerText = "Play hand";
+     playerContainer.parentElement.append(btnPlay);
+
+     // == BTN END TURN
+     const btnEndTurn = document.createElement('div');
+     btnEndTurn.classList = 'btn btn--end';
+     btnEndTurn.innerText = "End turn";
+     playerContainer.parentElement.append(btnEndTurn);
+ 
 })
 
-
+function triggerAITurns() {
+    if (game.currentPlayerIndex !== 0) {
+      game.playTurn();
+    }
+  }
+  
+   
 // ========== 💥💥 Event click SELECT CARD 💥💥 ==========
 gameTableHTML.addEventListener('click', (e) => {
-    const card = e.target.closest('.card--hand');
-    const name = e.target.dataset.name;
-    const symbol = e.target.dataset.symbol;
-
+    card = e.target.closest('.card--hand');
+    cardName = e.target.dataset.name;
+    cardSymbol = e.target.dataset.symbol;
+  
     if (!card) return;
-
+  
     const playerContainer = card.closest('.player--main');
     if (playerContainer) {
-    game.players[0].selectCard(name, symbol);
-    console.log(card);
-    card.classList.toggle("selected");
-    console.log(...game.players[0].selectedCards);
-
+      // Mise à jour logique
+      game.players[0].selectCard(cardName, cardSymbol);
+  
+      // Mise à jour visuelle
+      document.querySelectorAll('.player--main .card--hand').forEach(c => {
+        c.classList.remove('selected');
+      });
+  
+      game.players[0].selectedCards.forEach(selected => {
+        // Trouver la carte DOM correspondante
+        document.querySelectorAll('.player--main .card--hand img').forEach(img => {
+          if (
+            img.dataset.name === selected.name &&
+            img.dataset.symbol === selected.symbol
+          ) {
+            img.closest('.card--hand').classList.add('selected');
+          }
+        });
+      });
+    
     }
-});
+  });
+
+  function UpdateHand() {
+    let handContainerHTML  = document.querySelector('.player__hand');
+    handContainerHTML.innerHTML = ``;
+    for (let card of game.players[0].hand){
+        handContainerHTML.innerHTML += `
+        <div class="card card--hand">
+            <img src="img/cards/${card.name}${card.symbol}.png" alt="card" data-name="${card.name}" data-symbol="${card.symbol}">
+        </div>`
+    }
+  }
+  function UpdateDeck() {
+    if (!deckHTML) return;
+    deckHTML.innerHTML = '';
+    for (let i = 0; i < game.deck.length; i++) {
+      deckHTML.innerHTML += `
+        <div class="card card--deck">
+          <img src="img/cards/card-back.png" alt="card" class="card--back">
+        </div>`;
+    }
+  }
+  
+  function UpdatePile() {
+    if (!pileHTML || game.pile.length === 0) return;
+    const top = game.pile[game.pile.length - 1];
+    pileHTML.innerHTML = `
+      <div class="card card--deck">
+        <img src="img/cards/${top.name}${top.symbol}.png" alt="card" class="card--pile">
+      </div>`;
+  }
+  
+
+
+// ========== 💥💥 Event click BTN PLAY 💥💥 ==========
+gameTableHTML.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn--play')) {
+      const currentPlayer = game.players[0];
+  
+      if (
+        currentPlayer.selectedCards.length > 0 &&
+        currentPlayer.canPlay(currentPlayer.selectedCards[0], game.pile)
+      ) {
+        currentPlayer.play(game.pile);
+        currentPlayer.clearSelection();
+        currentPlayer.draw(game.deck);
+      } else {
+        currentPlayer.pickUpPile(game.pile);
+      }
+  
+      game.nextTurn();
+      UpdateHand();
+      UpdatePile();
+      UpdateDeck();
+      triggerAITurns();
+    }
+  });
+  

@@ -108,7 +108,7 @@ input::selection {
   }
 
 .btn{
-    background-color: rgba(182, 250, 203, 0.747);
+    background-color: rgba(182, 250, 203);
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -116,16 +116,20 @@ input::selection {
     transition: .3s all ease-in-out;
     cursor: pointer;
 
-    &--delete{
-        color: red;
-        font-size: 22px;
-        cursor: pointer;
-        transition: .3s all ease-in-out;
-
-        &:hover{
-            color: rgb(110, 3, 3);
-        }
+    &--play{
+        position: absolute;
+        bottom: 20%;
+        right: -50%;
     }
+
+    &--end{
+        background-color: rgb(235, 30, 30);
+        color: white;
+        position: absolute;
+        bottom: 20%;
+        right: -100%;
+    }
+
 }
 
 .btn:hover{
@@ -204,8 +208,7 @@ h2 {
     }
 
     &__face-down{
-        bottom: 110%;
-        right: 1%;
+        bottom: 115%;
     }
 
     &__face-up{
@@ -241,6 +244,7 @@ h2 {
         background-color: white;
         border-radius: 10px;
     }
+
     
 }
 
@@ -271,9 +275,8 @@ h2 {
     transform: translate(-50%, -50%);
     width: 100px;
     height: 136px;
-    box-shadow: 0px 0px 10px rgb(184, 178, 238);
-    border-radius: 10px;
 }
+
 
 #player{
 
