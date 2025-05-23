@@ -187,17 +187,30 @@ class Player {
         }
     }
 
-    selectCard(card){
-        if (this.hand.includes(card)) {
-            this.selectedCards.push(card)
+    selectCard(name, symbol) {
+        const foundCard = this.hand.find(
+          c => c.name === name && c.symbol === symbol
+        );
+      
+        if (!foundCard) return;
+      
+        // Si aucune carte encore sélectionnée → on ajoute
+        if (this.selectedCards.length === 0) {
+          this.selectedCards.push(foundCard);
+          return;
         }
-        // Sinon, on vérifie que la carte a la même valeur que la première sélectionnée
+      
+        // Sinon, vérifier que la nouvelle carte a la même valeur
         const selectedValue = this.selectedCards[0].value;
-
-        if (card.value === selectedValue && this.hand.includes(card)) {
-            this.selectedCards.push(card);
+        const selectedSymbol = this.selectedCards[0].symbol;
+        if (foundCard.value === selectedValue && foundCard.symbol != selectedSymbol) {
+          this.selectedCards.push(foundCard);
+        } else {
+            this.selectedCards = [];
+            this.selectedCards.push(foundCard);
         }
-    }
+      } 
+      
 
     clearSelection(){
         this.selectedCards = [];
@@ -257,24 +270,13 @@ class Player {
 // ==================================================
 
 
-
-
-
-
-// console.log(game.players);
-// console.log(game.deck);
-
 const playerNameInput = document.getElementById('name');
 const playerNbrInput = document.getElementById('nbr-players');
 const startBtn = document.querySelector('.btn--add');
 const formContainerHTML = document.querySelector('.form');
 const gameTableHTML = document.querySelector('.game-table');
-const deckHTML = document.querySelector('.deck__container');
-
-function displayGame() {
-    const gameTable = document.createElement('div');
-}
-
+let game;
+// ========== 💥💥 Event click boutton START 💥💥 ==========
 startBtn.addEventListener('click', (e) => {
     e.preventDefault();
     let playerNbr = Number(playerNbrInput.value);
@@ -285,12 +287,10 @@ startBtn.addEventListener('click', (e) => {
     for (let i = 0; i < playerNbr; i++) {
       players.push(new Player(`Player ${i + 1}`));
     }
-
-
-  
-    const game = new Game(players);
+    game = new Game(players);
     game.distributionCards();
 
+    // ========== 🃏 Générer les joueurs + mains 🃏 ==========
    for (let index = 0; index < playerNbr; index++) {
     gameTableHTML.innerHTML += `
     <div class="player__container" id="player-${index + 1}">
@@ -298,35 +298,35 @@ startBtn.addEventListener('click', (e) => {
                 <div class="player__cards">
                     <div class="player__face-down player__cards--container">
                         <div class="card card--down">
-                        <img src="img/cards/${game.players[index].faceDown[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        <img src="img/cards/card-back.png" alt="card" class="card--back">
                         </div>
                         <div class="card card--down">
-                        <img src="img/cards/${game.players[index].faceDown[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        <img src="img/cards/card-back.png" alt="card" class="card--back">
                         </div>
                         <div class="card card--down">
-                        <img src="img/cards/${game.players[index].faceDown[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                        <img src="img/cards/card-back.png" alt="card" class="card--back">
                        </div>
                     </div>
                     <div class="player__face-up player__cards--container">
                         <div class="card card--up">
-                        <img src="img/cards/${game.players[index].faceUp[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].faceUp[0].name}${game.players[index].faceUp[0].symbol}.png" alt="card" data-name="${game.players[index].faceUp[0].name}" data-symbol="${game.players[index].faceUp[0].symbol}">
                         </div>
                         <div class="card card--up">
-                        <img src="img/cards/${game.players[index].faceUp[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].faceUp[1].name}${game.players[index].faceUp[1].symbol}.png" alt="card" data-name="${game.players[index].faceUp[1].name}" data-symbol="${game.players[index].faceUp[1].symbol}">
                         </div>
                         <div class="card card--up">
-                        <img src="img/cards/${game.players[index].faceUp[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].faceUp[2].name}${game.players[index].faceUp[2].symbol}.png" alt="card" data-name="${game.players[index].faceUp[2].name}" data-symbol="${game.players[index].faceUp[2].symbol}">
                         </div>
                     </div>
                     <div class="player__hand player__cards--container">
                         <div class="card card--hand">
-                        <img src="img/cards/${game.players[index].hand[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].hand[0].name}${game.players[index].hand[0].symbol}.png" alt="card" data-name="${game.players[index].hand[0].name}" data-symbol="${game.players[index].hand[0].symbol}">
                         </div>
                         <div class="card card--hand">
-                        <img src="img/cards/${game.players[index].hand[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].hand[1].name}${game.players[index].hand[1].symbol}.png" alt="card" data-name="${game.players[index].hand[1].name}" data-symbol="${game.players[index].hand[1].symbol}">
                         </div>
                         <div class="card card--hand">
-                        <img src="img/cards/${game.players[index].hand[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                        <img src="img/cards/${game.players[index].hand[2].name}${game.players[index].hand[2].symbol}.png" alt="card" data-name="${game.players[index].hand[2].name}" data-symbol="${game.players[index].hand[2].symbol}">
                         </div>
                     </div>
                 </div>
@@ -334,22 +334,40 @@ startBtn.addEventListener('click', (e) => {
     `
     }
 
-
+    // ========== 🃏 Générer le deck 🃏 ==========
+    const deckHTML = document.createElement('div');
+    deckHTML.classList = 'deck__container';
     for (let index = 0; index < game.deck.length; index++) {
         deckHTML.innerHTML += `
-        <img src="img/cards/${game.deck[index].name}${game.deck[index].symbol}.png" alt="card">
+        <div class="card card--deck">
+            <img src="img/cards/card-back.png" alt="card" class="card--back">
+        </div>
         `
-        console.log(game.deck[index]);
     }
-    
-    
-
+    gameTableHTML.append(deckHTML);
+     
+    // ========== 🃏 Modifier le nom du joueur principal 🃏 ==========
     const playerContainer = gameTableHTML.querySelector('.player__name'); 
     playerContainer.textContent = playerName;
     playerContainer.parentElement.classList.add('player--main');
-
     console.log(game.players);
-
-    displayGame();
 })
 
+
+// ========== 💥💥 Event click SELECT CARD 💥💥 ==========
+gameTableHTML.addEventListener('click', (e) => {
+    const card = e.target.closest('.card--hand');
+    const name = e.target.dataset.name;
+    const symbol = e.target.dataset.symbol;
+
+    if (!card) return;
+
+    const playerContainer = card.closest('.player--main');
+    if (playerContainer) {
+    game.players[0].selectCard(name, symbol);
+    console.log(card);
+    card.classList.toggle("selected");
+    console.log(...game.players[0].selectedCards);
+
+    }
+});

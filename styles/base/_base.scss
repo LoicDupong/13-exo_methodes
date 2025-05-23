@@ -154,6 +154,7 @@ h2 {
     
 }
 
+
 .player{
 
     &__container{
@@ -173,7 +174,22 @@ h2 {
         .player__name{
             background-color: rgb(215, 212, 241);
         }
+
+        .card{
+            cursor: pointer;
+        }
+
+        img{
+            border-radius: 10px;
+            transition: .3s all ease-in-out;
+    
+            &:hover{
+                transform: translateY(-5%);
+                box-shadow: 0px 0px 10px rgb(184, 178, 238);
+            }
+        }
     }
+
     &__cards{
         width: calc((100px + 8px) * 3);
         height: 136px;
@@ -198,21 +214,65 @@ h2 {
 
 }
 
-.card{
-    width: 100px;
+.selected{
+    transform: translateY(-10%);
+    scale: 1.1;
     transition: .3s all ease-in-out;
-    cursor: pointer;
 
     img{
-        border-radius: 10px;
-        transition: .3s all ease-in-out;
-
+   
         &:hover{
-            transform: translateY(-5%);
-            box-shadow: 0px 0px 10px rgb(184, 178, 238);;
+            transform: none;
         }
     }
+}
+
+.card{
+    width: 100px;
+
+    &--deck{
+        position: relative;
+        img{
+            position: absolute;
+        }
+    }
+
+    &--back{
+        background-color: white;
+        border-radius: 10px;
+    }
     
+}
+
+.deck__container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-175%, -50%);
+    width: 100px;
+    height: 136px;
+
+    .card{
+        cursor: auto;
+    }
+
+    img{
+        &:hover{
+            transform: none;
+            box-shadow: unset;
+        }
+    }
+}
+
+.pile__container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 136px;
+    box-shadow: 0px 0px 10px rgb(184, 178, 238);
+    border-radius: 10px;
 }
 
 #player{
