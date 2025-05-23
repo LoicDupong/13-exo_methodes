@@ -269,6 +269,7 @@ const playerNbrInput = document.getElementById('nbr-players');
 const startBtn = document.querySelector('.btn--add');
 const formContainerHTML = document.querySelector('.form');
 const gameTableHTML = document.querySelector('.game-table');
+const deckHTML = document.querySelector('.deck__container');
 
 function displayGame() {
     const gameTable = document.createElement('div');
@@ -292,30 +293,61 @@ startBtn.addEventListener('click', (e) => {
 
    for (let index = 0; index < playerNbr; index++) {
     gameTableHTML.innerHTML += `
-    <div class="player__container">
+    <div class="player__container" id="player-${index + 1}">
                 <div class="player__name">${game.players[index].name}</div>
                 <div class="player__cards">
-                    <div class="player__face-down">
-                        <div class="card card--down">${game.players[index].faceDown[0].name}${game.players[index].faceDown[0].symbol}</div>
-                        <div class="card card--down">${game.players[index].faceDown[1].name}${game.players[index].faceDown[1].symbol}</div>
-                        <div class="card card--down">${game.players[index].faceDown[2].name}${game.players[index].faceDown[2].symbol}</div>
+                    <div class="player__face-down player__cards--container">
+                        <div class="card card--down">
+                        <img src="img/cards/${game.players[index].faceDown[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--down">
+                        <img src="img/cards/${game.players[index].faceDown[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--down">
+                        <img src="img/cards/${game.players[index].faceDown[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                       </div>
                     </div>
-                    <div class="player__face-up">
-                        <div class="card card--up">${game.players[index].faceUp[0].name}${game.players[index].faceDown[0].symbol}</div>
-                        <div class="card card--up">${game.players[index].faceUp[1].name}${game.players[index].faceDown[1].symbol}</div>
-                        <div class="card card--up">${game.players[index].faceUp[2].name}${game.players[index].faceDown[2].symbol}</div>
+                    <div class="player__face-up player__cards--container">
+                        <div class="card card--up">
+                        <img src="img/cards/${game.players[index].faceUp[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--up">
+                        <img src="img/cards/${game.players[index].faceUp[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--up">
+                        <img src="img/cards/${game.players[index].faceUp[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                        </div>
                     </div>
-                    <div class="player__hand">
-                        <div class="card card--hand">${game.players[index].hand[0].name}${game.players[index].faceDown[0].symbol}</div>
-                        <div class="card card--hand">${game.players[index].hand[1].name}${game.players[index].faceDown[1].symbol}</div>
-                        <div class="card card--hand">${game.players[index].hand[2].name}${game.players[index].faceDown[2].symbol}</div>
+                    <div class="player__hand player__cards--container">
+                        <div class="card card--hand">
+                        <img src="img/cards/${game.players[index].hand[0].name}${game.players[index].faceDown[0].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--hand">
+                        <img src="img/cards/${game.players[index].hand[1].name}${game.players[index].faceDown[1].symbol}.png" alt="card">
+                        </div>
+                        <div class="card card--hand">
+                        <img src="img/cards/${game.players[index].hand[2].name}${game.players[index].faceDown[2].symbol}.png" alt="card">
+                        </div>
                     </div>
                 </div>
-            </div>
+    </div>
     `
     }
 
-    gameTableHTML.querySelector('.player__name').textContent = playerName;
+
+    for (let index = 0; index < game.deck.length; index++) {
+        deckHTML.innerHTML += `
+        <img src="img/cards/${game.deck[index].name}${game.deck[index].symbol}.png" alt="card">
+        `
+        console.log(game.deck[index]);
+    }
+    
+    
+
+    const playerContainer = gameTableHTML.querySelector('.player__name'); 
+    playerContainer.textContent = playerName;
+    playerContainer.parentElement.classList.add('player--main');
+
     console.log(game.players);
 
     displayGame();
